@@ -1,7 +1,7 @@
 {
   "kind": "api_package",
   "name": "alpaca",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "display_name": "Alpaca Trading",
   "description": "Alpaca brokerage API — paper/live trading: portfolio, orders, watchlist, one-shot price triggers.",
   "keywords": [
@@ -38,6 +38,10 @@
     "triggers": {
       "type": "string",
       "default": "[]"
+    },
+    "watchlist_symbols": {
+      "type": "string",
+      "default": "BTC/USD"
     }
   },
   "commands": [
@@ -249,9 +253,28 @@
   ],
   "connections": [
     {
-      "name": "prices",
+      "name": "crypto",
       "type": "longpoll",
-      "url_template": "{{state.base_url}}/v2/stocks/bars",
+      "url_template": "https://data.alpaca.markets/v1beta3/crypto/us/latest/bars",
+      "headers_template": {
+        "APCA-API-KEY-ID": "{{state.key_id}}",
+        "APCA-API-SECRET-KEY": "{{state.secret_key}}"
+      },
+      "poll": {
+        "cursor_path": "bars",
+        "interval_s": 30,
+        "params_template": {
+          "symbols": "{{state.watchlist_symbols}}"
+        }
+      },
+      "hooks": {
+        "on_message": "on price update"
+      }
+    },
+    {
+      "name": "stocks",
+      "type": "longpoll",
+      "url_template": "https://data.alpaca.markets/v2/stocks/bars",
       "headers_template": {
         "APCA-API-KEY-ID": "{{state.key_id}}",
         "APCA-API-SECRET-KEY": "{{state.secret_key}}"
@@ -259,7 +282,11 @@
       "poll": {
         "cursor_path": "next_page_token",
         "interval_s": 60,
-        "params_template": {}
+        "params_template": {
+          "symbols": "{{state.watchlist_symbols}}",
+          "timeframe": "1Min",
+          "limit": "1"
+        }
       },
       "hooks": {
         "on_message": "on price update"
