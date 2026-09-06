@@ -12,7 +12,8 @@ function run(ctx)
     notional = a.notional,
     side = a.side,
     type = a.type or "market",
-    time_in_force = a.time_in_force or "day"
+    -- crypto symbols (contain "/") require gtc; equities default to day
+    time_in_force = a.time_in_force or (string.find(tostring(a.symbol), "/", 1, true) and "gtc" or "day")
   }
   if a.limit_price ~= nil then body.limit_price = a.limit_price end
   if a.stop_price ~= nil then body.stop_price = a.stop_price end
