@@ -104,7 +104,7 @@
     {
       "name": "order place",
       "kind": "action",
-      "description": "Submit an order. Side buy|sell; qty in shares OR notional in dollars (e.g. notional=150 for $150 worth; exactly one of qty/notional); time_in_force day|gtc|ioc|fok.",
+      "description": "Submit an order. Side buy|sell; qty in shares OR notional in dollars (exactly one; crypto notional minimum is $10); time_in_force day|gtc|ioc|fok (crypto defaults gtc).",
       "parameters": {
         "symbol": {
           "type": "string",
@@ -266,11 +266,11 @@
     {
       "name": "trigger remove",
       "kind": "action",
-      "description": "Disarm a trigger. Accepts trigger_id or id.",
+      "description": "Disarm a trigger. Pass trigger_id or id.",
       "parameters": {
         "trigger_id": {
           "type": "string",
-          "required": true
+          "required": false
         },
         "id": {
           "type": "string",
