@@ -1,7 +1,7 @@
 {
   "kind": "api_package",
   "name": "alpaca",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "display_name": "Alpaca Trading",
   "description": "Alpaca brokerage API — paper/live trading: portfolio, orders, watchlist, one-shot price triggers.",
   "keywords": [
@@ -58,6 +58,22 @@
       "script_file": "scripts/positions_list.lua"
     },
     {
+      "name": "position close",
+      "kind": "action",
+      "description": "Close an open position by symbol via market order. Optional qty closes partially; omit for full close.",
+      "parameters": {
+        "symbol": {
+          "type": "string",
+          "required": true
+        },
+        "qty": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "script_file": "scripts/position_close.lua"
+    },
+    {
       "name": "orders list",
       "kind": "action",
       "description": "Recent orders (default open; all=true for history).",
@@ -74,9 +90,21 @@
       "script_file": "scripts/orders_list.lua"
     },
     {
+      "name": "order get",
+      "kind": "action",
+      "description": "Fetch a single order by id with full detail: status, fills, timestamps. Works for open, filled and cancelled orders.",
+      "parameters": {
+        "order_id": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "script_file": "scripts/order_get.lua"
+    },
+    {
       "name": "order place",
       "kind": "action",
-      "description": "Submit an order. Side buy|sell; qty in shares (fractional allowed as string); time_in_force day|gtc|ioc|fok.",
+      "description": "Submit an order. Side buy|sell; qty in shares OR notional in dollars (e.g. notional=150 for $150 worth; exactly one of qty/notional); time_in_force day|gtc|ioc|fok.",
       "parameters": {
         "symbol": {
           "type": "string",
@@ -84,7 +112,7 @@
         },
         "qty": {
           "type": "string",
-          "required": true
+          "required": false
         },
         "side": {
           "type": "string",
@@ -107,6 +135,10 @@
           "required": false
         },
         "client_order_id": {
+          "type": "string",
+          "required": false
+        },
+        "notional": {
           "type": "string",
           "required": false
         }
@@ -204,7 +236,7 @@
     {
       "name": "trigger add",
       "kind": "action",
-      "description": "Arm a one-shot price trigger: when symbol crosses above/below threshold, fire prompt to the owning agent (once). Returns current close for context.",
+      "description": "Arm a one-shot price trigger: when symbol crosses above/below threshold, fire prompt to the owning agent (once). Returns current close for context. The prompt is the agent-facing text delivered when the trigger fires (required).",
       "parameters": {
         "symbol": {
           "type": "string",
@@ -234,7 +266,7 @@
     {
       "name": "trigger remove",
       "kind": "action",
-      "description": "Disarm a trigger by id.",
+      "description": "Disarm a trigger. Accepts trigger_id or id.",
       "parameters": {
         "trigger_id": {
           "type": "string",

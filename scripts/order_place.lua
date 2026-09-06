@@ -3,9 +3,13 @@ function run(ctx)
     return {success = false, error = "credentials not configured (key_id, secret_key)"}
   end
   local a = ctx.args
+  if a.qty == nil and a.notional == nil then
+    return {success = false, error = "either qty or notional is required (notional = dollar amount, e.g. 150 for $150 worth)"}
+  end
   local body = {
     symbol = a.symbol,
     qty = a.qty,
+    notional = a.notional,
     side = a.side,
     type = a.type or "market",
     time_in_force = a.time_in_force or "day"
