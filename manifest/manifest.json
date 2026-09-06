@@ -1,0 +1,265 @@
+{
+  "kind": "api_package",
+  "name": "alpaca",
+  "version": "1.0.0",
+  "display_name": "Alpaca Trading",
+  "description": "Alpaca brokerage API — paper/live trading: portfolio, orders, watchlist, one-shot price triggers.",
+  "keywords": [
+    "alpaca",
+    "trading",
+    "brokerage",
+    "portfolio",
+    "orders"
+  ],
+  "author": "Kestrel",
+  "license": "MIT",
+  "homepage": "https://github.com/railstracks/animus-package-alpaca",
+  "state_schema": {
+    "key_id": {
+      "type": "string",
+      "secret": true
+    },
+    "secret_key": {
+      "type": "string",
+      "secret": true
+    },
+    "paper": {
+      "type": "boolean",
+      "default": true
+    },
+    "watchlist": {
+      "type": "string",
+      "default": "[]"
+    },
+    "base_url": {
+      "type": "string",
+      "default": "https://paper-api.alpaca.markets"
+    }
+  },
+  "commands": [
+    {
+      "name": "account get",
+      "kind": "action",
+      "description": "Account summary: equity, cash, buying power, P&L.",
+      "script_file": "scripts/account_get.lua"
+    },
+    {
+      "name": "positions list",
+      "kind": "action",
+      "description": "Open positions with current price, market value, unrealized P&L.",
+      "script_file": "scripts/positions_list.lua"
+    },
+    {
+      "name": "orders list",
+      "kind": "action",
+      "description": "Recent orders (default open; all=true for history).",
+      "parameters": {
+        "all": {
+          "type": "boolean",
+          "required": false
+        },
+        "limit": {
+          "type": "integer",
+          "required": false
+        }
+      },
+      "script_file": "scripts/orders_list.lua"
+    },
+    {
+      "name": "order place",
+      "kind": "action",
+      "description": "Submit an order. Side buy|sell; qty in shares (fractional allowed as string); time_in_force day|gtc|ioc|fok.",
+      "parameters": {
+        "symbol": {
+          "type": "string",
+          "required": true
+        },
+        "qty": {
+          "type": "string",
+          "required": true
+        },
+        "side": {
+          "type": "string",
+          "required": true
+        },
+        "type": {
+          "type": "string",
+          "required": false
+        },
+        "time_in_force": {
+          "type": "string",
+          "required": false
+        },
+        "limit_price": {
+          "type": "string",
+          "required": false
+        },
+        "stop_price": {
+          "type": "string",
+          "required": false
+        },
+        "client_order_id": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "script_file": "scripts/order_place.lua"
+    },
+    {
+      "name": "order cancel",
+      "kind": "action",
+      "description": "Cancel an open order by id.",
+      "parameters": {
+        "order_id": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "script_file": "scripts/order_cancel.lua"
+    },
+    {
+      "name": "order replace",
+      "kind": "action",
+      "description": "Replace quantity/limit/stop/time_in_force of an open order.",
+      "parameters": {
+        "order_id": {
+          "type": "string",
+          "required": true
+        },
+        "qty": {
+          "type": "string",
+          "required": false
+        },
+        "limit_price": {
+          "type": "string",
+          "required": false
+        },
+        "stop_price": {
+          "type": "string",
+          "required": false
+        },
+        "time_in_force": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "script_file": "scripts/order_replace.lua"
+    },
+    {
+      "name": "asset get",
+      "kind": "action",
+      "description": "Asset info: tradability, marginability, shortability, price precision.",
+      "parameters": {
+        "symbol": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "script_file": "scripts/asset_get.lua"
+    },
+    {
+      "name": "clock get",
+      "kind": "action",
+      "description": "Market clock: is the market open, next open/close.",
+      "script_file": "scripts/clock_get.lua"
+    },
+    {
+      "name": "watchlist list",
+      "kind": "action",
+      "description": "Symbols currently tracked for trigger evaluation.",
+      "script_file": "scripts/watchlist_list.lua"
+    },
+    {
+      "name": "watchlist add",
+      "kind": "action",
+      "description": "Add a symbol to the tracked list.",
+      "parameters": {
+        "symbol": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "script_file": "scripts/watchlist_add.lua"
+    },
+    {
+      "name": "watchlist remove",
+      "kind": "action",
+      "description": "Remove a symbol from the tracked list.",
+      "parameters": {
+        "symbol": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "script_file": "scripts/watchlist_remove.lua"
+    },
+    {
+      "name": "trigger add",
+      "kind": "action",
+      "description": "Arm a one-shot price trigger: when symbol crosses above/below threshold, fire prompt to the owning agent (once). Returns current close for context.",
+      "parameters": {
+        "symbol": {
+          "type": "string",
+          "required": true
+        },
+        "condition": {
+          "type": "string",
+          "required": true
+        },
+        "threshold": {
+          "type": "string",
+          "required": true
+        },
+        "prompt": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "script_file": "scripts/trigger_add.lua"
+    },
+    {
+      "name": "trigger list",
+      "kind": "action",
+      "description": "Armed and recently-fired triggers.",
+      "script_file": "scripts/trigger_list.lua"
+    },
+    {
+      "name": "trigger remove",
+      "kind": "action",
+      "description": "Disarm a trigger by id.",
+      "parameters": {
+        "trigger_id": {
+          "type": "string",
+          "required": true
+        }
+      },
+      "script_file": "scripts/trigger_remove.lua"
+    },
+    {
+      "name": "on price update",
+      "kind": "hook",
+      "event": "on_message",
+      "description": "Connection hook: evaluates fired triggers against latest prices; one-shot semantics.",
+      "script_file": "scripts/on_price_update.lua"
+    }
+  ],
+  "connections": [
+    {
+      "name": "prices",
+      "type": "longpoll",
+      "url_template": "{{state.base_url}}/v2/stocks/bars",
+      "headers_template": {
+        "APCA-API-KEY-ID": "{{state.key_id}}",
+        "APCA-API-SECRET-KEY": "{{state.secret_key}}"
+      },
+      "poll": {
+        "cursor_path": "next_page_token",
+        "interval_s": 60,
+        "params_template": {}
+      },
+      "hooks": {
+        "on_message": "on price update"
+      }
+    }
+  ]
+}
