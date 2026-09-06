@@ -60,7 +60,7 @@
     {
       "name": "position close",
       "kind": "action",
-      "description": "Close an open position by symbol via market order. Optional qty closes partially; omit for full close.",
+      "description": "Close an open position by symbol via market order (BTC/USD or BTCUSD both accepted). Optional qty closes partially; omit for full close.",
       "parameters": {
         "symbol": {
           "type": "string",
