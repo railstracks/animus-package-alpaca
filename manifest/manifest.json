@@ -1,7 +1,7 @@
 {
   "kind": "api_package",
   "name": "alpaca",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "display_name": "Alpaca Trading",
   "description": "Alpaca brokerage API — paper/live trading: portfolio, orders, watchlist, one-shot price triggers.",
   "keywords": [
