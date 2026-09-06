@@ -49,4 +49,4 @@ function shared.require_auth(pkg)
   return true
 end
 
-return M
+return shared
