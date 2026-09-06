@@ -11,7 +11,8 @@ function run(ctx)
     end
     table.insert(out, t)
   end
-  ctx.package.set_state("triggers", json.encode(out))
+  local ok, err = ctx.package.set_state("triggers", json.encode(out))
+  if not ok then return {success = false, error = "trigger persist failed: " .. tostring(err)} end
   return {
     success = removed,
     output = removed and ("trigger " .. ctx.args.trigger_id .. " disarmed") or ("no trigger " .. ctx.args.trigger_id)

@@ -42,7 +42,8 @@ function run(ctx)
     end
   end
   if updated then
-    ctx.package.set_state("triggers", json.encode(list))
+    local ok, err = ctx.package.set_state("triggers", json.encode(list))
+    if not ok then return {success = false, error = "trigger persist failed: " .. tostring(err)} end
   end
 
   -- Fire log: package filespace, provenance for the agent's journal.

@@ -9,6 +9,7 @@ function run(ctx)
     end
   end
   table.insert(list, symbol)
-  ctx.package.set_state("watchlist", json.encode(list))
+  local ok, err = ctx.package.set_state("watchlist", json.encode(list))
+  if not ok then return {success = false, error = "watchlist persist failed: " .. tostring(err)} end
   return {success = true, output = symbol .. " added to watchlist", count = #list, symbols = list}
 end

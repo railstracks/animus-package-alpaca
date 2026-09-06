@@ -22,7 +22,8 @@ function run(ctx)
     created_at = ctx.now
   }
   table.insert(list, trigger)
-  ctx.package.set_state("triggers", json.encode(list))
+  local ok, err = ctx.package.set_state("triggers", json.encode(list))
+  if not ok then return {success = false, error = "trigger persist failed: " .. tostring(err)} end
 
   -- Ensure the symbol is tracked so the poller watches it.
   local wraw = ctx.package.get_state("watchlist") or "[]"
@@ -34,7 +35,8 @@ function run(ctx)
   end
   if not tracked then
     table.insert(wlist, trigger.symbol)
-    ctx.package.set_state("watchlist", json.encode(wlist))
+    local wok, werr = ctx.package.set_state("watchlist", json.encode(wlist))
+    if not wok then return {success = false, error = "watchlist persist failed: " .. tostring(werr)} end
   end
 
   -- Current close for context (best effort; failure does not block arming).

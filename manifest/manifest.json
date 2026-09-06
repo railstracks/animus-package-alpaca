@@ -34,6 +34,10 @@
     "base_url": {
       "type": "string",
       "default": "https://paper-api.alpaca.markets"
+    },
+    "triggers": {
+      "type": "string",
+      "default": "[]"
     }
   },
   "commands": [
