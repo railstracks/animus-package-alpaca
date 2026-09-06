@@ -10,9 +10,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 
 def load_shared():
     src = open(os.path.join(ROOT, "scripts", "_shared.lua"), encoding="utf-8").read()
-    src = re.sub(r"local M = \{\}\n", "local shared = {}\n", src, count=1)
-    src = re.sub(r"\nreturn M\s*$", "\n", src)
-    src = re.sub(r"^function M\.", "function shared.", src, flags=re.M)
+    src = re.sub(r"\nreturn shared\s*$", "\n", src)
     return src
 
 
