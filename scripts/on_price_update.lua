@@ -15,9 +15,16 @@ function run(ctx)
     if ev.symbol ~= nil and ev.close ~= nil then
       prices[string.upper(ev.symbol)] = tonumber(ev.close)
     elseif ev.bars ~= nil then
-      for i, b in ipairs(ev.bars) do
-        if b.symbol ~= nil and b.c ~= nil then
-          prices[string.upper(b.symbol)] = tonumber(b.c)
+      -- Two response shapes exist:
+      --   object map (crypto latest-bars): {["BTC/USD"] = {c = ...}}
+      --   array (stock bars):              {{symbol = "...", c = ...}}
+      for sym, b in pairs(ev.bars) do
+        if type(b) == "table" then
+          if b.c ~= nil then
+            prices[string.upper(sym)] = tonumber(b.c)
+          elseif b.symbol ~= nil and b.c ~= nil then
+            prices[string.upper(b.symbol)] = tonumber(b.c)
+          end
         end
       end
     end
