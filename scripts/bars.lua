@@ -12,12 +12,21 @@ function run(ctx)
   if limit > 1000 then limit = 1000 end
 
   local params = {"symbols=" .. tostring(a.symbols), "timeframe=" .. timeframe, "limit=" .. limit}
+  -- v2 stocks bars REQUIRE a start (no default lookback); crypto without start returns
+  -- only the current partial bar. Default a bounded window when the caller omits start.
+  local function days_ago(n)
+    return os.date("!%Y-%m-%dT%H:%M:%SZ", os.time() - n * 86400)
+  end
+  local is_crypto = shared.is_crypto(a.symbols)
+  if (a.start == nil or a.start == "") and (a.stop == nil or a.stop == "") then
+    table.insert(params, "start=" .. days_ago(is_crypto and 7 or 30))
+  end
   if a.start ~= nil and a.start ~= "" then table.insert(params, "start=" .. tostring(a.start)) end
   if a.stop ~= nil and a.stop ~= "" then table.insert(params, "end=" .. tostring(a.stop)) end
   if a.page_token ~= nil and a.page_token ~= "" then table.insert(params, "page_token=" .. tostring(a.page_token)) end
 
   local path
-  if shared.is_crypto(a.symbols) then
+  if is_crypto then
     path = "/v1beta3/crypto/us/bars?" .. table.concat(params, "&")
   else
     table.insert(params, "feed=" .. (a.feed or "iex"))
