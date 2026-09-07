@@ -61,3 +61,13 @@ Command shape (proposed):
 - Symbol-shape routing (`/` → crypto) is the established convention (TIF default, position close fallback) — reuse everywhere.
 - Client-side search/pagination only where API lacks filters (assets confirmed).
 - Every list command defaults to compact + bounded (limit default ≤ 20, total always reported).
+
+## API quirks banked (live-verified Sept 7)
+
+- **v2 stock bars REQUIRE `start`** — no default lookback; omit it and you get `{"bars":{}}` (silently). Package defaults: crypto 7d, stock 30d lookback when caller omits start.
+- **IEX feed (paper/free tier) serves ~20 days** of daily stock history. `sip` returns empty silently (not entitled); `otc` 403s explicitly.
+- **Multi-symbol bars page symbol-by-symbol** — all pages of symbol 1, then symbol 2. `next_page_token` continues; limit applies per page, not per symbol.
+- **News lives under `v1beta1`** (not v1beta3 like the crypto data): `data.alpaca.markets/v1beta1/news`.
+- **Crypto without `start`** returns only the current partial bar.
+- **Animus Lua sandbox quirks:** `os.date` ignores its time argument (always "now") and inserts a literal `!` prefix — date arithmetic needs JDN calendar math (Hinnant civil-from-days, verified against python). Arg validation runs at manifest level before scripts.
+- **Lua HTTP client body cap** was 1MB (KernelConfig) — raised to 32MB; assets list (~7MB) was silently truncated before.
