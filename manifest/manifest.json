@@ -1,7 +1,7 @@
 {
   "kind": "api_package",
   "name": "alpaca",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "display_name": "Alpaca Trading",
   "description": "Alpaca brokerage API — paper/live trading: portfolio, orders, watchlist, one-shot price triggers.",
   "keywords": [
@@ -42,6 +42,11 @@
     "watchlist_symbols": {
       "type": "string",
       "default": "BTC/USD"
+    },
+    "stock_symbols": {
+      "type": "string",
+      "description": "comma-separated stock symbols for the stocks poller connection (plain symbols, no slash)",
+      "default": "AAPL,MSFT"
     }
   },
   "commands": [
@@ -236,6 +241,142 @@
       "script_file": "scripts/clock_get.lua"
     },
     {
+      "name": "bars",
+      "kind": "action",
+      "description": "Historical OHLCV bars. Routes by symbol shape: BTC/USD-style -> crypto (v1beta3), plain symbols -> stocks (feed iex on paper). timeframe 1Min|5Min|15Min|1Hour|1Day (default 1Hour); limit default 100 max 1000; start/end RFC3339; page_token continues a truncated page (next_page_token in response). One asset class per call.",
+      "parameters": {
+        "symbols": {
+          "type": "string",
+          "required": true
+        },
+        "timeframe": {
+          "type": "string",
+          "required": false
+        },
+        "start": {
+          "type": "string",
+          "required": false
+        },
+        "stop": {
+          "type": "string",
+          "required": false
+        },
+        "limit": {
+          "type": "string",
+          "required": false
+        },
+        "feed": {
+          "type": "string",
+          "required": false
+        },
+        "adjustment": {
+          "type": "string",
+          "required": false
+        },
+        "page_token": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "script_file": "scripts/bars.lua"
+    },
+    {
+      "name": "latest bar",
+      "kind": "action",
+      "description": "Latest bar per symbol (routes crypto/stock by symbol shape). Crypto trades 24/7; stock latest uses feed iex on paper keys.",
+      "parameters": {
+        "symbols": {
+          "type": "string",
+          "required": true
+        },
+        "feed": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "script_file": "scripts/latest_bar.lua"
+    },
+    {
+      "name": "latest quote",
+      "kind": "action",
+      "description": "Latest bid/ask quote per symbol (routes crypto/stock by symbol shape).",
+      "parameters": {
+        "symbols": {
+          "type": "string",
+          "required": true
+        },
+        "feed": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "script_file": "scripts/latest_quote.lua"
+    },
+    {
+      "name": "latest trade",
+      "kind": "action",
+      "description": "Latest executed trade per symbol (routes crypto/stock by symbol shape).",
+      "parameters": {
+        "symbols": {
+          "type": "string",
+          "required": true
+        },
+        "feed": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "script_file": "scripts/latest_trade.lua"
+    },
+    {
+      "name": "orderbook",
+      "kind": "action",
+      "description": "Crypto order book depth (bids/asks). Crypto-only. depth default 10 max 50.",
+      "parameters": {
+        "symbols": {
+          "type": "string",
+          "required": true
+        },
+        "depth": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "script_file": "scripts/orderbook.lua"
+    },
+    {
+      "name": "news",
+      "kind": "action",
+      "description": "Stock market news articles. Optional symbols filter, start/end, sort asc|desc, limit default 10 max 50, page_token pagination.",
+      "parameters": {
+        "symbols": {
+          "type": "string",
+          "required": false
+        },
+        "start": {
+          "type": "string",
+          "required": false
+        },
+        "stop": {
+          "type": "string",
+          "required": false
+        },
+        "sort": {
+          "type": "string",
+          "required": false
+        },
+        "limit": {
+          "type": "string",
+          "required": false
+        },
+        "page_token": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "script_file": "scripts/news.lua"
+    },
+    {
       "name": "watchlist list",
       "kind": "action",
       "description": "Symbols currently tracked for trigger evaluation.",
@@ -351,7 +492,7 @@
         "cursor_path": "next_page_token",
         "interval_s": 60,
         "params_template": {
-          "symbols": "{{state.watchlist_symbols}}",
+          "symbols": "{{state.stock_symbols}}",
           "timeframe": "1Min",
           "limit": "1"
         }
