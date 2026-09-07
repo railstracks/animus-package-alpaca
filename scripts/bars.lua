@@ -15,7 +15,10 @@ function run(ctx)
   -- v2 stocks bars REQUIRE a start (no default lookback); crypto without start returns
   -- only the current partial bar. Default a bounded window when the caller omits start.
   local function days_ago(n)
-    return os.date("!%Y-%m-%dT%H:%M:%SZ", os.time() - n * 86400)
+    local s = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time() - n * 86400)
+    -- this Lua inserts a literal '!' prefix instead of honoring it as UTC marker
+    if string.sub(s, 1, 1) == "!" then s = string.sub(s, 2) end
+    return s
   end
   local is_crypto = shared.is_crypto(a.symbols)
   if (a.start == nil or a.start == "") and (a.stop == nil or a.stop == "") then

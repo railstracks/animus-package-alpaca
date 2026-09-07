@@ -14,7 +14,7 @@ function run(ctx)
   if a.sort ~= nil and a.sort ~= "" then table.insert(params, "sort=" .. tostring(a.sort)) end
   if a.page_token ~= nil and a.page_token ~= "" then table.insert(params, "page_token=" .. tostring(a.page_token)) end
 
-  local r = shared.data_get(ctx.package, ctx.http, "/v1beta3/news?" .. table.concat(params, "&"))
+  local r = shared.data_get(ctx.package, ctx.http, "/v1beta1/news?" .. table.concat(params, "&"))
   if r.status ~= 200 then
     return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
   end
