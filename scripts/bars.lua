@@ -22,12 +22,19 @@ function run(ctx)
     local mm = m + 12 * a - 3
     return d + math.floor((153 * mm + 2) / 5) + 365 * yy + math.floor(yy / 4) - math.floor(yy / 100) + math.floor(yy / 400) - 32045
   end
+  local function idiv(a, b) return math.floor(a / b) end
   local function from_jdn(j)
-    local e = 4 * (j + 1401 + math.floor((math.floor(4 * j + 271279) / 146097) * 3 / 4) - 38) / 4 + 3
-    local h = 4 * (j + 1) - math.floor(e / 1461)
-    local m = math.floor((5 * math.floor(h / 153) - 2) / 5 + 3)
-    local d = math.floor(h - math.floor((153 * m + 2) / 5) + 1)
-    local y = math.floor(e / 1461) - 4716 + math.floor((12 - m + 2) / 12)
+    -- Hinnant civil_from_days (expects days since 1970 epoch; JDN offset 2440588)
+    local z = j - 2440588 + 719468
+    local era = (z >= 0) and idiv(z, 146097) or idiv(z - 146096, 146097)
+    local doe = z - era * 146097
+    local yoe = idiv(doe - idiv(doe, 1460) + idiv(doe, 36524) - idiv(doe, 146096), 365)
+    local y = yoe + era * 400
+    local doy = doe - (365 * yoe + idiv(yoe, 4) - idiv(yoe, 100))
+    local mp = idiv(5 * doy + 2, 153)
+    local d = doy - idiv(153 * mp + 2, 5) + 1
+    local m = (mp < 10) and (mp + 3) or (mp - 9)
+    if y <= 0 then y = y - 1 end
     return string.format("%04d-%02d-%02d", y, m, d)
   end
   local function days_ago(n)
