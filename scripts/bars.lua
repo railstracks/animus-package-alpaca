@@ -14,11 +14,29 @@ function run(ctx)
   local params = {"symbols=" .. tostring(a.symbols), "timeframe=" .. timeframe, "limit=" .. limit}
   -- v2 stocks bars REQUIRE a start (no default lookback); crypto without start returns
   -- only the current partial bar. Default a bounded window when the caller omits start.
+  -- Sandbox os.date ignores its time argument (always 'now'), so date arithmetic
+  -- must be calendar math: Y-M-D -> Julian day number -> subtract -> back.
+  local function jdn(y, m, d)
+    local a = math.floor((14 - m) / 12)
+    local yy = y + 4800 - a
+    local mm = m + 12 * a - 3
+    return d + math.floor((153 * mm + 2) / 5) + 365 * yy + math.floor(yy / 4) - math.floor(yy / 100) + math.floor(yy / 400) - 32045
+  end
+  local function from_jdn(j)
+    local e = 4 * (j + 1401 + math.floor((math.floor(4 * j + 271279) / 146097) * 3 / 4) - 38) / 4 + 3
+    local h = 4 * (j + 1) - math.floor(e / 1461)
+    local m = math.floor((5 * math.floor(h / 153) - 2) / 5 + 3)
+    local d = math.floor(h - math.floor((153 * m + 2) / 5) + 1)
+    local y = math.floor(e / 1461) - 4716 + math.floor((12 - m + 2) / 12)
+    return string.format("%04d-%02d-%02d", y, m, d)
+  end
   local function days_ago(n)
-    local s = os.date("!%Y-%m-%dT%H:%M:%SZ", os.time() - n * 86400)
-    -- this Lua inserts a literal '!' prefix instead of honoring it as UTC marker
-    if string.sub(s, 1, 1) == "!" then s = string.sub(s, 2) end
-    return s
+    local now = os.date("!%Y-%m-%dT%H:%M:%SZ")
+    if string.sub(now, 1, 1) == "!" then now = string.sub(now, 2) end
+    local y = tonumber(string.sub(now, 1, 4))
+    local m = tonumber(string.sub(now, 6, 7))
+    local d = tonumber(string.sub(now, 9, 10))
+    return from_jdn(jdn(y, m, d) - n)
   end
   local is_crypto = shared.is_crypto(a.symbols)
   if (a.start == nil or a.start == "") and (a.stop == nil or a.stop == "") then
