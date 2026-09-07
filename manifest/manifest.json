@@ -243,7 +243,7 @@
     {
       "name": "bars",
       "kind": "action",
-      "description": "Historical OHLCV bars. Routes by symbol shape: BTC/USD-style -> crypto (v1beta3), plain symbols -> stocks (feed iex on paper). timeframe 1Min|5Min|15Min|1Hour|1Day (default 1Hour); limit default 100 max 1000; start/end RFC3339; page_token continues a truncated page (next_page_token in response). One asset class per call.",
+      "description": "Historical OHLCV bars. Routes by symbol shape: BTC/USD-style -> crypto (v1beta3), plain -> stocks (feed iex on paper: ~20 days daily history on free tier). timeframe 1Min|5Min|15Min|1Hour|1Day (default 1Hour); limit default 100 max 1000 (per page); start/end RFC3339 or YYYY-MM-DD (default lookback: crypto 7d, stock 30d); page_token continues a truncated page. Multi-symbol queries page symbol-by-symbol (all of symbol 1, then symbol 2). One asset class per call.",
       "parameters": {
         "symbols": {
           "type": "string",

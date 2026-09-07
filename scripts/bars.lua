@@ -63,7 +63,6 @@ function run(ctx)
   end
 
   local r = shared.data_get(ctx.package, ctx.http, path)
-  local dbg = {path = path}
   if r.status ~= 200 then
     return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
   end
@@ -83,7 +82,7 @@ function run(ctx)
       end
     end
   end
-  local out = {success = true, bars = out_bars, bars_returned = total, debug = dbg}
+  local out = {success = true, bars = out_bars, bars_returned = total}
   if body.next_page_token ~= nil and body.next_page_token ~= "" then
     out.next_page_token = body.next_page_token
     out.note = "more pages exist — pass page_token to continue"
