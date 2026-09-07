@@ -1,7 +1,7 @@
 {
   "kind": "api_package",
   "name": "alpaca",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "display_name": "Alpaca Trading",
   "description": "Alpaca brokerage API — paper/live trading: portfolio, orders, watchlist, one-shot price triggers.",
   "keywords": [
@@ -184,6 +184,38 @@
         }
       },
       "script_file": "scripts/order_replace.lua"
+    },
+    {
+      "name": "assets list",
+      "kind": "action",
+      "description": "List assets with filters. Server-side: status (active|inactive|all, default active), class (us_equity|crypto), exchange (NASDAQ|NYSE|ARCA|BATS|AMEX|OTC). Client-side: search (case-insensitive substring on symbol or name), limit (default 20, max 100), offset. Returns total + page. Use search for symbol discovery.",
+      "parameters": {
+        "search": {
+          "type": "string",
+          "required": false
+        },
+        "status": {
+          "type": "string",
+          "required": false
+        },
+        "class": {
+          "type": "string",
+          "required": false
+        },
+        "exchange": {
+          "type": "string",
+          "required": false
+        },
+        "limit": {
+          "type": "string",
+          "required": false
+        },
+        "offset": {
+          "type": "string",
+          "required": false
+        }
+      },
+      "script_file": "scripts/assets_list.lua"
     },
     {
       "name": "asset get",
