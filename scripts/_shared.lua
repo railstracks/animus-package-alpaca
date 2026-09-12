@@ -14,13 +14,25 @@ function shared.headers(pkg)
   }
 end
 
+-- Normalize a configured base URL. All trading paths already carry their
+-- version segment (/v2/...), so a base that ends in a version doubles it
+-- (".../v2/v2/account" — field mishap Sept 6, 2026). Strip one trailing
+-- version segment and any trailing slashes; everything else passes through.
+function shared.normalize_base(u)
+  u = string.gsub(tostring(u), "/+$", "")
+  u = string.gsub(u, "/v%d+$", "")
+  return u
+end
+
 function shared.base_url(pkg)
   local paper = pkg.get_state("paper")
   if paper == false or paper == "false" then
     return "https://api.alpaca.markets"
   end
   local base = pkg.get_state("base_url")
-  if base ~= nil and base ~= "" and base ~= "***" then return base end
+  if base ~= nil and base ~= "" and base ~= "***" then
+    return shared.normalize_base(base)
+  end
   return "https://paper-api.alpaca.markets"
 end
 
