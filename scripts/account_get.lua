@@ -4,7 +4,7 @@ function run(ctx)
   end
   local r = shared.get(ctx.package, ctx.http, "/v2/account")
   if r.status ~= 200 then
-    return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
+    return {success = false, http_status = r.status, error = shared.http_error(r), data = r.json}
   end
   local a = r.json or {}
   local out = {

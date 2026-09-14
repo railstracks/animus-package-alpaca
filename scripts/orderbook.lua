@@ -15,7 +15,7 @@ function run(ctx)
 
   local r = shared.data_get(ctx.package, ctx.http, "/v1beta3/crypto/us/latest/orderbooks?symbols=" .. tostring(a.symbols))
   if r.status ~= 200 then
-    return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
+    return {success = false, http_status = r.status, error = shared.http_error(r), data = r.json}
   end
 
   local books = (r.json or {}).orderbooks or {}

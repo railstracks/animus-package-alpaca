@@ -5,7 +5,7 @@ function run(ctx)
   local a = ctx.args
   local r = shared.get(ctx.package, ctx.http, "/v2/orders/" .. a.order_id)
   if r.status ~= 200 then
-    return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
+    return {success = false, http_status = r.status, error = shared.http_error(r), data = r.json}
   end
   local o = r.json or {}
   return {

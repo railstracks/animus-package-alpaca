@@ -20,7 +20,7 @@ function run(ctx)
     r = shared.send(ctx.package, ctx.http, "DELETE", path, nil)
   end
   if r.status ~= 200 and r.status ~= 201 and r.status ~= 204 then
-    return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
+    return {success = false, http_status = r.status, error = shared.http_error(r), data = r.json}
   end
   -- 204 on paper sometimes returns empty body; 200 returns the closing order.
   local o = r.json or {}

@@ -20,7 +20,7 @@ function run(ctx)
   if a.client_order_id ~= nil then body.client_order_id = a.client_order_id end
   local r = shared.send(ctx.package, ctx.http, "POST", "/v2/orders", body)
   if r.status ~= 200 and r.status ~= 201 then
-    return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
+    return {success = false, http_status = r.status, error = shared.http_error(r), data = r.json}
   end
   local o = r.json or {}
   return {

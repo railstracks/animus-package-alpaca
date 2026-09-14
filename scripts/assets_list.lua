@@ -14,7 +14,7 @@ function run(ctx)
 
   local r = shared.get(ctx.package, ctx.http, path)
   if r.status ~= 200 then
-    return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
+    return {success = false, http_status = r.status, error = shared.http_error(r), data = r.json}
   end
 
   -- client-side search: case-insensitive substring on symbol OR name

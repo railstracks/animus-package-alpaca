@@ -6,5 +6,5 @@ function run(ctx)
   if r.status == 200 or r.status == 204 then
     return {success = true, output = "order " .. ctx.args.order_id .. " cancelled"}
   end
-  return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
+  return {success = false, http_status = r.status, error = shared.http_error(r), data = r.json}
 end

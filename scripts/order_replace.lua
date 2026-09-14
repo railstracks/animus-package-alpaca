@@ -10,7 +10,7 @@ function run(ctx)
   if a.time_in_force ~= nil then body.time_in_force = a.time_in_force end
   local r = shared.send(ctx.package, ctx.http, "PATCH", "/v2/orders/" .. a.order_id, body)
   if r.status ~= 200 and r.status ~= 207 then
-    return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
+    return {success = false, http_status = r.status, error = shared.http_error(r), data = r.json}
   end
   return {success = true, data = r.json}
 end

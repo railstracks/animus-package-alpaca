@@ -46,6 +46,19 @@ function shared.data_get(pkg, http, path)
   return http.get("https://data.alpaca.markets" .. path, {headers = shared.headers(pkg)})
 end
 
+-- Error string for a failed HTTP result. A bare status hides the transport
+-- reason: r.error carries curl's verdict on failures (e.g. "Operation
+-- timed out") and the budget/policy block message — without it, an Alpaca
+-- stall reads as a meaningless "HTTP 0" (Sept 14, 2026). Absent on clean
+-- HTTP error responses (status >= 400 with a JSON body — see r.json/data).
+function shared.http_error(r)
+  local s = "HTTP " .. tostring(r.status)
+  if r.error ~= nil and r.error ~= "" then
+    s = s .. " (" .. tostring(r.error) .. ")"
+  end
+  return s
+end
+
 -- Compact one bar row (Alpaca: t,o,h,l,c,v, n optional)
 function shared.bar_row(b)
   return {t = b.t, o = b.o, h = b.h, l = b.l, c = b.c, v = b.v}
@@ -80,7 +93,7 @@ function shared.latest_impl(ctx, kind)
 
   local r = shared.data_get(ctx.package, ctx.http, path)
   if r.status ~= 200 then
-    return {success = false, http_status = r.status, error = "HTTP " .. tostring(r.status), data = r.json}
+    return {success = false, http_status = r.status, error = shared.http_error(r), data = r.json}
   end
 
   local body = r.json or {}
