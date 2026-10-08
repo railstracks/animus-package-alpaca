@@ -1,7 +1,7 @@
 {
   "kind": "api_package",
   "name": "alpaca",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "display_name": "Alpaca Trading",
   "description": "Alpaca brokerage API — paper/live trading: portfolio, orders, watchlist, one-shot price triggers.",
   "keywords": [
@@ -14,6 +14,10 @@
   "author": "Kestrel",
   "license": "MIT",
   "homepage": "https://github.com/railstracks/animus-package-alpaca",
+  "egress_hosts": [
+    "data.alpaca.markets",
+    "paper-api.alpaca.markets"
+  ],
   "state_schema": {
     "key_id": {
       "type": "string",
